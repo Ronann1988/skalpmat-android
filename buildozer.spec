@@ -38,13 +38,13 @@ fullscreen = 0
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,WAKE_LOCK,VIBRATE,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,FOREGROUND_SERVICE,FOREGROUND_SERVICE_DATA_EXCHANGE
 
 # (int) Target Android API
-android.api = 33
-android.minapi = 24
-android.sdk = 33
-android.ndk = 28c
+android.api = 31
+android.minapi = 21
+android.sdk = 31
+android.ndk = 25b
 
 # (bool) If True, then skip trying to update the Android sdk
-android.skip_update = False
+android.skip_update = True
 
 # (bool) If True, then automatically accept SDK license agreements
 android.accept_sdk_license = True
