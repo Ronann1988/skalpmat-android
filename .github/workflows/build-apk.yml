@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build APK
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest  # ubuntu-22.04 or 24.04
     
     steps:
       - name: Checkout code
@@ -56,7 +56,8 @@ jobs:
             libsqlite3-dev \
             libreadline-dev \
             libssl-dev \
-            libncurses5
+            libncurses6 \
+            libsqlite3-dev
       
       - name: Install Buildozer
         run: |
