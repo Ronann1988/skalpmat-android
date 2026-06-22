@@ -44,7 +44,7 @@ android.sdk = 31
 android.ndk = 25b
 
 # (bool) If True, then skip trying to update the Android sdk
-android.skip_update = False
+android.skip_update = True
 
 # (bool) If True, then automatically accept SDK license agreements
 android.accept_sdk_license = True
@@ -98,7 +98,7 @@ android.p4a_dep_with_constraint =
 android.gradle_daemon = True
 
 # (str) The directory in which the android project will be created
-android.project_dir = %(source.dir)s/.buildozer/android/platform/build-arm64-v8a/dists/skalpmat
+#android.project_dir = %(source.dir)s/.buildozer/android/platform/python-for-android
 
 # (int) The port on which the app will be deployed
 #deploy.port = 
@@ -122,7 +122,7 @@ android.project_dir = %(source.dir)s/.buildozer/android/platform/build-arm64-v8a
 #android.launch_activities = 
 
 # (bool) Package the app in debug mode
-android.debug = False
+android.debug = True
 
 # (str) The log level
 #log_level = 

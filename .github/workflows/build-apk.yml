@@ -10,18 +10,20 @@ on:
 jobs:
   build:
     name: Build APK
-    runs-on: ubuntu-latest  # ubuntu-22.04 or 24.04
-    
+    runs-on: ubuntu-22.04  # Ubuntu 22.04 — стабильная версия
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 1
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
           python-version: '3.8'
-      
-      - name: Install dependencies
+
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -57,33 +59,56 @@ jobs:
             libreadline-dev \
             libssl-dev \
             libncurses6 \
-            libsqlite3-dev
-      
+            zlib1g-dev
+
+      - name: Set up Java / JAVA_HOME
+        run: |
+          echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+
+      - name: Install Android SDK
+        run: |
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          cd $ANDROID_HOME/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
+          unzip -q cmdtools.zip
+          mkdir -p latest
+          mv cmdline-tools/* latest/ 2>/dev/null || true
+          rm cmdtools.zip
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+
       - name: Install Buildozer
         run: |
-          pip install --upgrade pip
+          pip install --upgrade pip wheel
+          pip install cython==0.29.37
           pip install buildozer==1.4.0
-          pip install cython==0.29.33
-      
-      - name: Copy bot files
+
+      - name: Verify files exist
         run: |
-          if [ -f "../Desktop/dist/synergy_bot_v6.py" ]; then
-            cp ../Desktop/dist/synergy_bot_v6.py synergy_bot_v7.py
-          fi
-          if [ -f "../Desktop/dist/.env" ]; then
-            cp ../Desktop/dist/.env .env
-          fi
+          echo "=== Files in repo ==="
           ls -la
-      
+          echo ""
+          echo "=== main.py check ==="
+          head -5 main.py
+          echo ""
+          echo "=== synergy_bot_v7.py check ==="
+          head -5 synergy_bot_v7.py
+          echo ""
+          echo "=== buildozer.spec check ==="
+          head -5 buildozer.spec
+
       - name: Build APK
+        env:
+          ANDROID_HOME: $HOME/android-sdk
+          JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
         run: |
-          if [ ! -f buildozer.spec ]; then
-            buildozer init
-          fi
-          buildozer -v android debug
-        
+          buildozer -v android debug 2>&1 | tail -100
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: skalpmat-apk
           path: bin/*.apk
