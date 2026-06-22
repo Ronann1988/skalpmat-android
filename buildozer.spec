@@ -44,7 +44,7 @@ android.sdk = 31
 android.ndk = 25b
 
 # (bool) If True, then skip trying to update the Android sdk
-android.skip_update = True
+android.skip_update = False
 
 # (bool) If True, then automatically accept SDK license agreements
 android.accept_sdk_license = True
