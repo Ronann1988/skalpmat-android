@@ -1,0 +1,115 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-ttf-dev \
+            libsdl2-gfx-dev \
+            libfreetype6-dev \
+            libjpeg-dev \
+            libtiff-dev \
+            tcl-dev \
+            tk-dev \
+            libsmpeg-dev \
+            libgtk-3-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            autoconf \
+            automake \
+            build-essential \
+            cmake \
+            libtool \
+            pkg-config \
+            zip \
+            unzip \
+            wget \
+            curl \
+            openjdk-11-jdk
+      
+      - name: Set up Android SDK
+        run: |
+          export ANDROID_HOME=$HOME/android-sdk
+          mkdir -p $ANDROID_HOME
+          cd $ANDROID_HOME
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
+          unzip -q cmdtools.zip
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+          rm cmdtools.zip
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-31"
+          sdkmanager "build-tools;31.0.0"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+      
+      - name: Install Buildozer
+        run: |
+          pip install buildozer cython==0.29.37
+          pip install -r requirements.txt
+      
+      - name: Copy required files
+        run: |
+          # Copy bot code if exists in dist folder
+          if [ -f "../Desktop/dist/synergy_bot_v6.py" ]; then
+            cp ../Desktop/dist/synergy_bot_v6.py synergy_bot_v7.py
+          fi
+          if [ -f "../Desktop/dist/.env" ]; then
+            cp ../Desktop/dist/.env .env
+          fi
+          ls -la
+      
+      - name: Build APK with Buildozer
+        run: |
+          # Initialize buildozer if needed
+          if [ ! -f buildozer.spec ]; then
+            buildozer init
+          fi
+          
+          # Build APK
+          buildozer -v android debug
+      
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: skalpmat-apk
+          path: bin/*.apk
+          retention-days: 30
+      
+      - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          files: bin/*.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

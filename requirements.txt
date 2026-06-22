@@ -1,0 +1,13 @@
+# Core dependencies
+flet==0.21.2
+python-dotenv==1.0.0
+pandas==2.1.4
+numpy==1.26.2
+requests==2.31.0
+telebot==0.0.5
+pytelegrambotapi==4.15.4
+gate-api==4.46.0
+scipy==1.11.4
+
+# Android-specific (for buildozer)
+# These will be installed via buildozer.spec recipes
