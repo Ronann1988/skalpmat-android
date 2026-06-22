@@ -20,7 +20,7 @@ version = 7.0.0
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.3.0,kivymd==1.2.0,pandas,numpy,requests,python-dateutil,pytz,telebot,pytelegrambotapi,gate-api,scipy,python-dotenv,matplotlib
+requirements = python3,kivy==2.3.0,kivymd==1.2.0,pandas,numpy,requests,python-dateutil,pytz,telebot,pytelegrambotapi,gate-api,python-dotenv,matplotlib
 
 # (str) Presplash of the application
 #presplash.filename = %(source.dir)s/data/presplash.png
@@ -38,10 +38,10 @@ fullscreen = 0
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,WAKE_LOCK,VIBRATE,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,FOREGROUND_SERVICE,FOREGROUND_SERVICE_DATA_EXCHANGE
 
 # (int) Target Android API
-android.api = 33
-android.minapi = 24
-android.sdk = 33
-android.ndk = 28c
+android.api = 31
+android.minapi = 21
+android.sdk = 31
+android.ndk = 25b
 
 # (bool) If True, then skip trying to update the Android sdk
 android.skip_update = False
