@@ -10,14 +10,59 @@ on:
 jobs:
   build:
     name: Build APK
-    runs-on: ubuntu-latest
-    
-    container:
-      image: docker://ghcr.io/kivy/buildozer:1.4.0
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-ttf-dev \
+            libsdl2-gfx-dev \
+            libfreetype6-dev \
+            libjpeg-dev \
+            libtiff-dev \
+            tcl-dev \
+            tk-dev \
+            libsmpeg-dev \
+            libgtk-3-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            autoconf \
+            automake \
+            build-essential \
+            cmake \
+            libtool \
+            pkg-config \
+            zip \
+            unzip \
+            wget \
+            curl \
+            openjdk-11-jdk \
+            libffi-dev \
+            libbz2-dev \
+            libsqlite3-dev \
+            libreadline-dev \
+            libssl-dev \
+            libncurses5
+      
+      - name: Install Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install buildozer==1.4.0
+          pip install cython==0.29.33
       
       - name: Copy bot files
         run: |
