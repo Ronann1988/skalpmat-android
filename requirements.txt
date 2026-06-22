@@ -6,7 +6,7 @@ numpy==1.26.2
 requests==2.31.0
 telebot==0.0.5
 pytelegrambotapi==4.15.4
-gate-api==4.46.0
+gate-api==4.45.0
 scipy==1.11.4
 
 # Android-specific (for buildozer)
