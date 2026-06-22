@@ -51,7 +51,7 @@ jobs:
             wget \
             curl \
             openjdk-11-jdk \
-            libncurses5 \
+            libncurses6 \
             libbz2-dev \
             libffi-dev \
             libsqlite3-dev \
